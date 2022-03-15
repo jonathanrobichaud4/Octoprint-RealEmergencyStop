@@ -38,7 +38,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 
     # Template hooks
     def get_template_configs(self):
-        return [dict(type="settings", custom_bindings=False)]
+        return [dict(type="settings", custom_bindings=True)]
 
     # Settings hook
     def get_settings_defaults(self):
@@ -73,7 +73,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 
             GPIO.remove_event_detect(self.button_pin)
             GPIO.add_event_detect(
-                self.button_pin, GPIO.BOTH,
+                self.button_pin, GPIO.FALLING,
                 callback=self.button_callback,
                 bouncetime=1
             )
