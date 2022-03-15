@@ -1,4 +1,4 @@
-<h3>{{ _('Emergency Stop Simplified') }}</h3>
+<h3>{{ _('Emergency Stop') }}</h3>
 <form class="form-horizontal marginTop">
     <div class="control-group">
         <div class="marginBot">
@@ -7,7 +7,17 @@
         <label class="control-label">{{ _('BCM pin:') }}</label>
         <div class="controls" data-toggle="tooltip">
             <input type="number" step="any" min="0" class="input-mini text-right"
-                   data-bind="value: settings.plugins.emergencystopsimplified.pin">
+                   data-bind="value: settings.plugins.emergencystopsimplified.button_pin">
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="marginBot">
+            <b>Which Raspberry Pi GPIO pin your LED output is attached to (-1 disables the plugin)</b>
+        </div>
+        <label class="control-label">{{ _('BCM pin:') }}</label>
+        <div class="controls" data-toggle="tooltip">
+            <input type="number" step="any" min="0" class="input-mini text-right"
+                   data-bind="value: settings.plugins.emergencystopsimplified.led_pin">
         </div>
     </div>
     <div class="control-group">
@@ -32,7 +42,7 @@
         </div>
         <div style="font-size: 11px">
             For more information click <a
-                href="https://github.com/Mechazawa/Emergency_stop_simplified">here</a>
+                href="https://github.com/jonathanrobichaud4/Octoprint_Emergency_stop">here</a>
         </div>
     </div>
 </form>

@@ -8,7 +8,7 @@ from time import sleep
 import RPi.GPIO as GPIO
 
 
-class Emergency_stop_simplifiedPlugin(octoprint.plugin.StartupPlugin,
+class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
                                        octoprint.plugin.EventHandlerPlugin,
                                        octoprint.plugin.TemplatePlugin,
                                        octoprint.plugin.SettingsPlugin,
@@ -17,11 +17,16 @@ class Emergency_stop_simplifiedPlugin(octoprint.plugin.StartupPlugin,
     def initialize(self):
         GPIO.setwarnings(False)  # Disable GPIO warnings
         self.estop_sent = False
-        self.pin_initialized = False
+        self.button_pin_initialized = False
+        self.led_pin_initialized = False
 
     @property
-    def pin(self):
-        return int(self._settings.get(["pin"]))
+    def button_pin(self):
+        return int(self._settings.get(["button_pin"]))
+    @property
+    def led_pin(self):
+        return int(self._settings.get(["led_pin"]))
+
 
     @property
     def switch(self):
@@ -29,7 +34,7 @@ class Emergency_stop_simplifiedPlugin(octoprint.plugin.StartupPlugin,
 
     # AssetPlugin hook
     def get_assets(self):
-        return dict(js=["js/emergencystopsimplified.js"], css=["css/emergencystopsimplified.css"])
+        return dict(js=["js/emergencystop.js"], css=["css/emergencystop.css"])
 
     # Template hooks
     def get_template_configs(self):
@@ -38,38 +43,51 @@ class Emergency_stop_simplifiedPlugin(octoprint.plugin.StartupPlugin,
     # Settings hook
     def get_settings_defaults(self):
         return dict(
-            pin=-1,  # Default is -1
+            button_pin=-1,  # Default is -1
+			led_pin=-1,
             switch=0
         )
 
     def on_after_startup(self):
-        self._logger.info("Emergency Stop Simplified started")
+        self._logger.info("Emergency Stop started")
         self._setup_button()
+        self._setup_led()
 
     def on_settings_save(self, data):
-        if self.sensor_enabled() and self.pin_initialized:
-            GPIO.remove_event_detect(self.pin)
+        if self.button_enabled() and self.button_pin_initialized:
+            GPIO.remove_event_detect(self.button_pin)
         octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
         self._setup_button()
+        self._setup_led()
 
     def _setup_button(self):
-        if self.sensor_enabled():
+        if self.button_enabled():
             self._logger.info("Setting up button.")
             self._logger.info("Using Board Mode")
             GPIO.setmode(GPIO.BCM)
-            self._logger.info("Emergency Stop button active on GPIO Pin [%s]" % self.pin)
+            self._logger.info("Emergency Stop button active on GPIO Pin [%s]" % self.button_pin)
             if self.switch is 0:
-                GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+                GPIO.setup(self.button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             else:
-                GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+                GPIO.setup(self.button_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-            GPIO.remove_event_detect(self.pin)
+            GPIO.remove_event_detect(self.button_pin)
             GPIO.add_event_detect(
-                self.pin, GPIO.BOTH,
+                self.button_pin, GPIO.BOTH,
                 callback=self.button_callback,
                 bouncetime=1
             )
-            self.pin_initialized = True
+            self.button_pin_initialized = True
+        else:
+            self._logger.info("Pin not configured, won't work unless configured!")
+
+    def _setup_led(self):
+        if self.button_enabled():
+            self._logger.info("Setting up LED.")
+            self._logger.info("Using Board Mode")
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(self.led_pin, GPIO.OUT, initial=GPIO.LOW)
+            self.led_pin_initialized = True
         else:
             self._logger.info("Pin not configured, won't work unless configured!")
 
@@ -77,11 +95,25 @@ class Emergency_stop_simplifiedPlugin(octoprint.plugin.StartupPlugin,
         if self.emergency_stop_triggered():
             self.send_emergency_stop()
 
-    def sensor_enabled(self):
-        return self.pin != -1
+
+    def button_enabled(self):
+        return self.button_pin != -1
 
     def emergency_stop_triggered(self):
-        return self.pin_initialized and self.sensor_enabled() and GPIO.input(self.pin) != self.switch
+        return self.button_pin_initialized and self.button_enabled() and GPIO.input(self.button_pin) != self.switch
+
+    def emergency_stop_reset(self):
+        self.led_interupt()
+
+    def activate_led(self):
+        try:
+            while True:
+                GPIO.output(self.led_pin, GPIO.HIGH) # Turn on
+                sleep(1)                  # Sleep for 1 second
+                GPIO.output(self.led_pin, GPIO.LOW)  # Turn off
+                sleep(1)
+        except self.led_interupt():
+               print("LED Off")
 
     def on_event(self, event, payload):
         if event is Events.CONNECTED:
@@ -89,7 +121,7 @@ class Emergency_stop_simplifiedPlugin(octoprint.plugin.StartupPlugin,
         elif event is Events.DISCONNECTED:
             self.estop_sent = True
 
-        if not self.sensor_enabled():
+        if not self.button_enabled():
             if event is Events.USER_LOGGED_IN:
                 self._plugin_manager.send_plugin_message(self._identifier, dict(type="info", autoClose=True, msg="Don' forget to configure this plugin."))
             elif event is Events.PRINT_STARTED:
@@ -101,6 +133,7 @@ class Emergency_stop_simplifiedPlugin(octoprint.plugin.StartupPlugin,
             self.send_emergency_stop()
         else:
             self.estop_sent = False
+            self.emergency_stop_reset()
 
     def send_emergency_stop(self):
         if self.estop_sent:
@@ -108,7 +141,9 @@ class Emergency_stop_simplifiedPlugin(octoprint.plugin.StartupPlugin,
 
         self._logger.info("Sending emergency stop GCODE")
         self._printer.commands("M112")
+        self.activate_led()
         self.estop_sent = True
+
 
 
     def get_update_information(self):
@@ -116,21 +151,22 @@ class Emergency_stop_simplifiedPlugin(octoprint.plugin.StartupPlugin,
         # Plugin here. See https://docs.octoprint.org/en/master/bundledplugins/softwareupdate.html
         # for details.
         return dict(
-            filamentsensorsimplified=dict(
-                displayName="Emergency stop simplified",
+            emergencystop=dict(
+                displayName="Emergency stop",
                 displayVersion=self._plugin_version,
 
                 # version check: github repository
                 type="github_release",
-                user="Mechazawa",
-                repo="Emergency_stop_simplified",
+                user="jonathanrobichaud4",
+                repo="Octoprint_Emergency_stop",
                 current=self._plugin_version,
 
                 # update method: pip
-                pip="https://github.com/Mechazawa/Emergency_stop_simplified/archive/{target_version}.zip"
+                pip="https://github.com/jonathanrobichaud4/Octoprint_Emergency_stop/archive/{target_version}.zip"
             )
         )
 
+GPIO.cleanup()
 # Starting with OctoPrint 1.4.0 OctoPrint will also support to run under Python 3 in addition to the deprecated
 # Python 2. New plugins should make sure to run under both versions for now. Uncomment one of the following
 # compatibility flags according to what Python versions your plugin supports!
@@ -138,8 +174,8 @@ class Emergency_stop_simplifiedPlugin(octoprint.plugin.StartupPlugin,
 # __plugin_pythoncompat__ = ">=3,<4" # only python 3
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
-__plugin_name__ = "Emergency Stop Simplified"
-__plugin_version__ = "0.1.1"
+__plugin_name__ = "Emergency Stop"
+__plugin_version__ = "0.0.1"
 
 def __plugin_check__():
     try:
@@ -152,7 +188,7 @@ def __plugin_check__():
 
 def __plugin_load__():
     global __plugin_implementation__
-    __plugin_implementation__ = Emergency_stop_simplifiedPlugin()
+    __plugin_implementation__ = Emergency_stopPlugin()
 
     global __plugin_hooks__
     __plugin_hooks__ = {

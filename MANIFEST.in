@@ -1,4 +1,4 @@
 include README.md
-recursive-include octoprint_emergencystopsimplified/templates *
-recursive-include octoprint_emergencystopsimplified/translations *
-recursive-include octoprint_emergencystopsimplified/static *
+recursive-include octoprint_emergencystop/templates *
+recursive-include octoprint_emergencystop/translations *
+recursive-include octoprint_emergencystop/static *

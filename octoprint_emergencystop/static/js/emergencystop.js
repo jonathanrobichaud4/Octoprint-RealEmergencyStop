@@ -1,5 +1,5 @@
 $(function() {
-    function emergencystopsimplifiedViewModel(parameters) {
+    function emergencystop(parameters) {
         var self = this;
         self.settingsViewModel = parameters[0];
 
@@ -24,7 +24,7 @@ $(function() {
     // information to the global variable OCTOPRINT_VIEWMODELS
     ADDITIONAL_VIEWMODELS.push([
         // This is the constructor to call for instantiating the plugin
-        emergencystopsimplifiedViewModel,
+        emergencystop,
 
         // This is a list of dependencies to inject into the plugin, the order which you request
         // here is the order in which the dependencies will be injected into your view model upon
@@ -32,6 +32,6 @@ $(function() {
         ["settingsViewModel"],
 
         // Finally, this is the list of selectors for all elements we want this view model to be bound to.
-        ["#settings_plugin_emergencystopsimplified_form"]
+        ["#settings_plugin_emergencystop_form"]
     ]);
 });

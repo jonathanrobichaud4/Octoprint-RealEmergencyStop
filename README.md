@@ -12,7 +12,7 @@ Let's check some features:
 Install via the bundled [Plugin Manager](https://docs.octoprint.org/en/master/bundledplugins/pluginmanager.html)
 or manually using this URL:
 
-    https://github.com/Mechazawa/Emergency_stop_simplified
+    https://github.com/jonathanrobichaud4/Octoprint_Emergency_stop
 
 ## Configuration
 
