@@ -65,7 +65,10 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
             self._logger.info("Setting up button.")
             self._logger.info("Using Board Mode")
             GPIO.setmode(GPIO.BCM)
-            self._logger.info("Emergency Stop button active on GPIO Pin [%s]" % self.button_pin)
+            self._logger.info(
+                f"Emergency Stop button active on GPIO Pin [{self.button_pin}]"
+            )
+
             if self.switch is 0:
                 GPIO.setup(self.button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             else:
@@ -79,7 +82,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
             )
             self.button_pin_initialized = True
         else:
-            self._logger.info("Pin not configured, won't work unless configured!")
+            self._logger.info("Button pin not configured, won't work unless configured!")
 
     def _setup_led(self):
         if self.button_enabled():
@@ -89,7 +92,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
             GPIO.setup(self.led_pin, GPIO.OUT, initial=GPIO.LOW)
             self.led_pin_initialized = True
         else:
-            self._logger.info("Pin not configured, won't work unless configured!")
+            self._logger.info("LED pin not configured, won't work unless configured!")
 
     def sending_gcode(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
         if self.emergency_stop_triggered():
@@ -103,17 +106,22 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         return self.button_pin_initialized and self.button_enabled() and GPIO.input(self.button_pin) != self.switch
 
     def emergency_stop_reset(self):
-        self.led_interupt()
+        self._printer.commands("FIRMWARE_RESET")
 
     def activate_led(self):
-        try:
-            while True:
+        self.blinking = False
+        while True:
+            if GPIO.input(self.button_pin):
+                blinking = True
+
+            if blinking:
                 GPIO.output(self.led_pin, GPIO.HIGH) # Turn on
-                sleep(1)                  # Sleep for 1 second
-                GPIO.output(self.led_pin, GPIO.LOW)  # Turn off
-                sleep(1)
-        except self.led_interupt():
-               print("LED Off")
+                sleep(1) # Sleep for 1 second
+                GPIO.output(self.led_pin, GPIO.LOW) # Turn off
+                sleep(1) # Sleep for 1 second
+
+
+
 
     def on_event(self, event, payload):
         if event is Events.CONNECTED:
@@ -131,9 +139,11 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         self._logger.info("Emergency stop button was triggered")
         if self.emergency_stop_triggered():
             self.send_emergency_stop()
+            self.blinking = True
         else:
             self.estop_sent = False
             self.emergency_stop_reset()
+            self.blinking = False
 
     def send_emergency_stop(self):
         if self.estop_sent:
@@ -141,8 +151,8 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 
         self._logger.info("Sending emergency stop GCODE")
         self._printer.commands("M112")
-        self.activate_led()
         self.estop_sent = True
+ #       self.activate_led()
 
 
 
