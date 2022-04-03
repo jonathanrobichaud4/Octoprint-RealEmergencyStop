@@ -67,12 +67,12 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
             self._logger.info("Emergency Stop button active on GPIO Pin [%s]" % self.button_pin)
 
             if self.switch is 0:
-                self.button = Button(self.button_pin)
+                button = Button(self.button_pin)
             else:
-                self.button = Button(self.button_pin, pull_up=False)
+                button = Button(self.button_pin, pull_up=False)
 
-            self.button.when_pressed = self.estop_activated()
-            self.button.when_released = self.estop_reset()
+            button.when_pressed = self.estop_activated()
+            button.when_released = self.estop_reset()
 
             self.button_pin_initialized = True
         else:
