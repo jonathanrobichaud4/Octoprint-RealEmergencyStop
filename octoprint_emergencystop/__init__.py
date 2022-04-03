@@ -71,7 +71,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
             #else:
             #    button = Button(self.button_pin, pull_up=False)
 
-            button = Button(self.button_pin)
+            button = Button(self.button_pin, pull_up=False)
 
             button.when_pressed = self._estop_activated
             button.when_released = self._estop_reset
@@ -100,6 +100,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         return self.button_pin_initialized and self.button_enabled() != self.switch
 
     def _estop_reset(self, _):
+        self._logger.info("Emergency stop button was reset")
         self._printer.commands("FIRMWARE_RESET")
         self.led.off()
 
@@ -165,7 +166,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.0.11"
+__plugin_version__ = "0.0.12"
 
 def __plugin_check__():
     try:
