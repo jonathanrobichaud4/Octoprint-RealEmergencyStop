@@ -71,7 +71,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
             #else:
             #    button = Button(self.button_pin, pull_up=False)
 
-            button = Button(self.button_pin, pull_up=False)
+            button = Button(self.button_pin, pull_up=True)
 
             button.when_pressed = self._estop_activated
             button.when_released = self._estop_reset
@@ -132,8 +132,8 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         self._logger.info("Sending emergency stop GCODE")
         self._printer.commands("M112")
         self.estop_sent = True
-        #self.led.blink(on_time=1, off_time=1, n=None, background=True)
-        self.led.on()
+        self.led.blink(on_time=1, off_time=1, n=None, background=True)
+        #self.led.on()
  #       self.activate_led()
 
 
@@ -166,7 +166,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.0.12"
+__plugin_version__ = "0.0.13"
 
 def __plugin_check__():
     try:
