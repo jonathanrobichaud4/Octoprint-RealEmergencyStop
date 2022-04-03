@@ -161,12 +161,12 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.5"
+__plugin_version__ = "0.1.6"
 
 def __plugin_check__():
     try:
         from gpiozero import LED, Button
-        from time import sleep
+        #from time import sleep
     except ImportError:
         return False
     return True
