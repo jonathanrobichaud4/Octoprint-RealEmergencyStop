@@ -44,8 +44,8 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
     # Settings hook
     def get_settings_defaults(self):
         return dict(
-            button_pin=23,  # Default is -1
-			led_pin=22,
+            button_pin=-1,  # Default is -1
+			led_pin=-1,
             switch=0
         )
 
@@ -68,8 +68,6 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
                 self.button = Button(self.button_pin, pull_up=True)
             else:
                 self.button = Button(self.button_pin, pull_up=False)
-
-            #self.button = Button(self.button_pin, pull_up=True)
 
             self.button.when_pressed = self._estop_activated
             self.button.when_released = self._estop_reset
@@ -161,12 +159,11 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.6"
+__plugin_version__ = "0.1.7"
 
 def __plugin_check__():
     try:
         from gpiozero import LED, Button
-        #from time import sleep
     except ImportError:
         return False
     return True

@@ -4,13 +4,13 @@ $(function() {
         self.settingsViewModel = parameters[0];
 
         self.onDataUpdaterPluginMessage = function(plugin, data) {
-            if (plugin !== "emergencystopsimplified") {
+            if (plugin !== "emergencystop") {
                 console.log('Ignoring '+plugin);
                 return;
             }
 
             new PNotify({
-                title: 'Emergency stop simplified',
+                title: 'Emergency stop',
                 text: data.msg,
                 type: data.type,
                 hide: data.autoClose
