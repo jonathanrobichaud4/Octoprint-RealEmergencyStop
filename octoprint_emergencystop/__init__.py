@@ -71,8 +71,10 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
             else:
                 button = Button(self.button_pin, pull_up=False)
 
-            button.when_pressed = self.estop_activated()
-            button.when_released = self.estop_reset()
+
+
+            button.when_pressed = self._estop_activated()
+            button.when_released = self._estop_reset()
 
             self.button_pin_initialized = True
         else:
@@ -97,7 +99,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
     def emergency_stop_triggered(self):
         return self.button_pin_initialized and self.button_enabled() and Button(self.button_pin) != self.switch
 
-    def estop_reset(self):
+    def _estop_reset(self, _):
         self._printer.commands("FIRMWARE_RESET")
         self.led.off()
 
@@ -113,7 +115,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
             elif event is Events.PRINT_STARTED:
                 self._plugin_manager.send_plugin_message(self._identifier, dict(type="info", autoClose=True, msg="You may have forgotten to configure this plugin."))
 
-    def estop_activated(self, _):
+    def _estop_activated(self, _):
         self._logger.info("Emergency stop button was triggered")
         if self.emergency_stop_triggered():
             self.send_emergency_stop()
@@ -163,7 +165,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.0.6"
+__plugin_version__ = "0.0.7"
 
 def __plugin_check__():
     try:
