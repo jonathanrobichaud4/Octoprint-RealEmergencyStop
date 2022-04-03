@@ -44,8 +44,8 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
     # Settings hook
     def get_settings_defaults(self):
         return dict(
-            button_pin=-1,  # Default is -1
-			led_pin=-1,
+            button_pin=22,  # Default is -1
+			led_pin=23,
             switch=0
         )
 
@@ -163,7 +163,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.0.4"
+__plugin_version__ = "0.0.5"
 
 def __plugin_check__():
     try:
