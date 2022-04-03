@@ -163,7 +163,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.0.5"
+__plugin_version__ = "0.0.6"
 
 def __plugin_check__():
     try:
