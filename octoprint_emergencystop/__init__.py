@@ -4,7 +4,7 @@ from __future__ import absolute_import
 import octoprint.plugin
 import re
 from octoprint.events import Events
-#from time import sleep
+from time import sleep
 #from signal import pause
 from gpiozero import LED, Button
 
@@ -100,6 +100,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
     def _estop_reset(self, _):
         self._logger.info("Emergency stop button was reset")
         self._printer.connect()
+        sleep(3)
         self._printer.commands("FIRMWARE_RESTART")
         self.led.off()
         self.estop_sent = False
@@ -160,11 +161,12 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.4"
+__plugin_version__ = "0.1.5"
 
 def __plugin_check__():
     try:
         from gpiozero import LED, Button
+        from time import sleep
     except ImportError:
         return False
     return True
