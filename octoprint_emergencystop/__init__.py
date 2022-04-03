@@ -55,8 +55,6 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         self._setup_led()
 
     def on_settings_save(self, data):
-        #if self.button_enabled() and self.button_pin_initialized:
-            #GPIO.remove_event_detect(self.button_pin)
         octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
         self._setup_button()
         self._setup_led()
@@ -66,12 +64,12 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
             self._logger.info("Setting up button.")
             self._logger.info("Emergency Stop button active on GPIO Pin [%s]" % self.button_pin)
 
-            #if self.switch is 0:
-            #    button = Button(self.button_pin)
-            #else:
-            #    button = Button(self.button_pin, pull_up=False)
+            if self.switch is 0:
+                button = Button(self.button_pin, pull_up=True)
+            else:
+                button = Button(self.button_pin, pull_up=False)
 
-            self.button = Button(self.button_pin, pull_up=True)
+            #self.button = Button(self.button_pin, pull_up=True)
 
             self.button.when_pressed = self._estop_activated
             self.button.when_released = self._estop_reset
@@ -101,7 +99,8 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 
     def _estop_reset(self, _):
         self._logger.info("Emergency stop button was reset")
-        self._printer.commands("FIRMWARE_RESET")
+        self._printer.connect()
+        self._printer.commands("FIRMWARE_RESTART")
         self.led.off()
         self.estop_sent = False
 
@@ -125,19 +124,13 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         else:
             self.estop_sent = False
 
-
     def send_emergency_stop(self):
         if self.estop_sent:
             return
-
         self._logger.info("Sending emergency stop GCODE")
         self._printer.commands("M112")
         self.estop_sent = True
         self.led.blink(on_time=1, off_time=1, n=None, background=True)
-        #self.led.on()
- #       self.activate_led()
-
-
 
     def get_update_information(self):
         # Define the configuration for your plugin to use with the Software Update
@@ -172,8 +165,6 @@ __plugin_version__ = "0.1.2"
 def __plugin_check__():
     try:
         from gpiozero import LED, Button
-        #if GPIO.VERSION < "0.6":  # Need at least 0.6 for edge detection
-         #   return False
     except ImportError:
         return False
     return True
@@ -185,5 +176,5 @@ def __plugin_load__():
     global __plugin_hooks__
     __plugin_hooks__ = {
         "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
-        "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.sending_gcode
+        "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.sending_gcode,
     }
