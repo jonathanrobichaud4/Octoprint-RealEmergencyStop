@@ -4,8 +4,9 @@ from __future__ import absolute_import
 import octoprint.plugin
 import re
 from octoprint.events import Events
-from time import sleep
-import RPi.GPIO as GPIO
+#from time import sleep
+#from signal import pause
+from gpiozero import LED, Button
 
 
 class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
@@ -15,10 +16,11 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
                                        octoprint.plugin.AssetPlugin):
 
     def initialize(self):
-        GPIO.setwarnings(False)  # Disable GPIO warnings
         self.estop_sent = False
         self.button_pin_initialized = False
         self.led_pin_initialized = False
+        self.button = None
+        self.led = None
 
     @property
     def button_pin(self):
@@ -26,7 +28,6 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
     @property
     def led_pin(self):
         return int(self._settings.get(["led_pin"]))
-
 
     @property
     def switch(self):
@@ -54,8 +55,8 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         self._setup_led()
 
     def on_settings_save(self, data):
-        if self.button_enabled() and self.button_pin_initialized:
-            GPIO.remove_event_detect(self.button_pin)
+        #if self.button_enabled() and self.button_pin_initialized:
+            #GPIO.remove_event_detect(self.button_pin)
         octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
         self._setup_button()
         self._setup_led()
@@ -63,23 +64,16 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
     def _setup_button(self):
         if self.button_enabled():
             self._logger.info("Setting up button.")
-            self._logger.info("Using Board Mode")
-            GPIO.setmode(GPIO.BCM)
-            self._logger.info(
-                f"Emergency Stop button active on GPIO Pin [{self.button_pin}]"
-            )
+            self._logger.info("Emergency Stop button active on GPIO Pin [%s]" % self.button_pin)
 
             if self.switch is 0:
-                GPIO.setup(self.button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+                self.button = Button(self.button_pin)
             else:
-                GPIO.setup(self.button_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+                self.button = Button(self.button_pin, pull_up=False)
 
-            GPIO.remove_event_detect(self.button_pin)
-            GPIO.add_event_detect(
-                self.button_pin, GPIO.FALLING,
-                callback=self.button_callback,
-                bouncetime=1
-            )
+            self.button.when_pressed = self.estop_activated()
+            self.button.when_released = self.estop_reset()
+
             self.button_pin_initialized = True
         else:
             self._logger.info("Button pin not configured, won't work unless configured!")
@@ -87,10 +81,9 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
     def _setup_led(self):
         if self.button_enabled():
             self._logger.info("Setting up LED.")
-            self._logger.info("Using Board Mode")
-            GPIO.setmode(GPIO.BCM)
-            GPIO.setup(self.led_pin, GPIO.OUT, initial=GPIO.LOW)
+            self.led = LED(self.led_pin)
             self.led_pin_initialized = True
+
         else:
             self._logger.info("LED pin not configured, won't work unless configured!")
 
@@ -98,30 +91,15 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         if self.emergency_stop_triggered():
             self.send_emergency_stop()
 
-
     def button_enabled(self):
         return self.button_pin != -1
 
     def emergency_stop_triggered(self):
-        return self.button_pin_initialized and self.button_enabled() and GPIO.input(self.button_pin) != self.switch
+        return self.button_pin_initialized and self.button_enabled() and Button(self.button_pin) != self.switch
 
-    def emergency_stop_reset(self):
+    def estop_reset(self):
         self._printer.commands("FIRMWARE_RESET")
-
-    def activate_led(self):
-        self.blinking = False
-        while True:
-            if GPIO.input(self.button_pin):
-                blinking = True
-
-            if blinking:
-                GPIO.output(self.led_pin, GPIO.HIGH) # Turn on
-                sleep(1) # Sleep for 1 second
-                GPIO.output(self.led_pin, GPIO.LOW) # Turn off
-                sleep(1) # Sleep for 1 second
-
-
-
+        self.led.off()
 
     def on_event(self, event, payload):
         if event is Events.CONNECTED:
@@ -135,15 +113,14 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
             elif event is Events.PRINT_STARTED:
                 self._plugin_manager.send_plugin_message(self._identifier, dict(type="info", autoClose=True, msg="You may have forgotten to configure this plugin."))
 
-    def button_callback(self, _):
+    def estop_activated(self, _):
         self._logger.info("Emergency stop button was triggered")
         if self.emergency_stop_triggered():
             self.send_emergency_stop()
-            self.blinking = True
+
         else:
             self.estop_sent = False
-            self.emergency_stop_reset()
-            self.blinking = False
+
 
     def send_emergency_stop(self):
         if self.estop_sent:
@@ -152,6 +129,8 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         self._logger.info("Sending emergency stop GCODE")
         self._printer.commands("M112")
         self.estop_sent = True
+        #self.led.blink(on_time=1, off_time=1, n=None, background=True)
+        self.led.on()
  #       self.activate_led()
 
 
@@ -176,7 +155,6 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
             )
         )
 
-#GPIO.cleanup()
 # Starting with OctoPrint 1.4.0 OctoPrint will also support to run under Python 3 in addition to the deprecated
 # Python 2. New plugins should make sure to run under both versions for now. Uncomment one of the following
 # compatibility flags according to what Python versions your plugin supports!
@@ -185,13 +163,13 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.0.3"
+__plugin_version__ = "0.0.4"
 
 def __plugin_check__():
     try:
-        import RPi.GPIO as GPIO
-        if GPIO.VERSION < "0.6":  # Need at least 0.6 for edge detection
-            return False
+        from gpiozero import LED, Button
+        #if GPIO.VERSION < "0.6":  # Need at least 0.6 for edge detection
+         #   return False
     except ImportError:
         return False
     return True

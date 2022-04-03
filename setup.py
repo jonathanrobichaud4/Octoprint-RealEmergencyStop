@@ -14,7 +14,7 @@ plugin_package = "octoprint_emergencystop"
 plugin_name = "Emergency stop"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
-plugin_version = "0.0.3"
+plugin_version = "0.0.4"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
@@ -33,7 +33,7 @@ plugin_url = "https://github.com/jonathanrobichaud4/Octoprint_Emergency_stop"
 plugin_license = "AGPLv3"
 
 # Any additional requirements besides OctoPrint should be listed here
-plugin_requires = ['RPi.GPIO']
+plugin_requires = ['gpiozero']
 
 ### --------------------------------------------------------------------------------------------------------------------
 ### More advanced options that you usually shouldn't have to touch follow after this point
