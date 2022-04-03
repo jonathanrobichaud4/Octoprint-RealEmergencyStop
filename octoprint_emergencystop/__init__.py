@@ -103,6 +103,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         self._logger.info("Emergency stop button was reset")
         self._printer.commands("FIRMWARE_RESET")
         self.led.off()
+        self.estop_sent = False
 
     def on_event(self, event, payload):
         if event is Events.CONNECTED:
@@ -166,7 +167,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.0.15"
+__plugin_version__ = "0.1.1"
 
 def __plugin_check__():
     try:
