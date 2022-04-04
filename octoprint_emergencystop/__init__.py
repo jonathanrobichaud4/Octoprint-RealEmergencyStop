@@ -95,6 +95,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 
     def _estop_reset(self, _):
         self._logger.info("Emergency stop button was reset")
+        self.led.blink(on_time=0.2, off_time=0.2, n=None, background=True)
         self._printer.connect()
         sleep(3)
         self._printer.commands("FIRMWARE_RESTART")

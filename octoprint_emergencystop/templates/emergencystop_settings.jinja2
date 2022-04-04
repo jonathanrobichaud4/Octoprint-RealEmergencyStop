@@ -25,24 +25,28 @@
 
     <div class="control-group">
         <div class="marginBot">
-            <b>Input terminal of the button (switch) needs to be connected to ground or 3.3 V</b>
+            <b>Button also needs to be connected to ground or 3.3 V</b>
         </div>
         <label class="control-label">{{ _('Button is connected to:') }}</label>
+
         <div class="controls" data-toggle="tooltip"
-             title="{{ _('Specify how the button is connected. One end of the button must be wired to ground or 3.3 V. Button is triggered when open.') }}">
+             title="{{ _('Specify how the button is connected. One end of the button must be wired to ground or 3.3 V. Button is triggered when closed.') }}">
             <select class="select-mini" data-bind="value: settings.plugins.emergencystop.switch">
                 <option value=0>{{ _('Ground') }}</option>
                 <option value=1>{{ _('3.3V') }}</option>
             </select>
         </div>
+
         <div class="alert-info wy-alert-warning marginTop">
             <span class="icon-info-sign"/>
             <span class="octoFontFamily iconIndent">Button is triggered when closed.</span>
         </div>
+
         <div class="alert-danger">
             <span class="icon-warning-sign"/>
             <span class="octoFontFamily iconIndent">Warning! Never connect the button to 5V! 5V could destroy GPIO of your Raspberry Pi.</span>
         </div>
+
         <div style="font-size: 11px">
             For more information click <a
                 href="https://github.com/jonathanrobichaud4/Octoprint_Emergency_stop">here</a>
