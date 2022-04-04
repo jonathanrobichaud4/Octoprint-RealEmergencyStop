@@ -37,7 +37,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 
     # Template hooks
     def get_template_configs(self):
-        return [dict(type="settings", custom_bindings=True)]
+        return [dict(type="settings", custom_bindings=False)]
 
     # Settings hook
     def get_settings_defaults(self):
@@ -157,7 +157,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.10"
+__plugin_version__ = "0.1.11"
 
 def __plugin_check__():
     try:
