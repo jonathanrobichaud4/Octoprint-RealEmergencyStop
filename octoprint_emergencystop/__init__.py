@@ -5,9 +5,7 @@ import octoprint.plugin
 import re
 from octoprint.events import Events
 from time import sleep
-#from signal import pause
 from gpiozero import LED, Button
-
 
 class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
                                        octoprint.plugin.EventHandlerPlugin,

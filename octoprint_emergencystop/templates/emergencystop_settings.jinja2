@@ -3,9 +3,9 @@
 
     <div class="control-group">
         <div class="marginBot">
-            <b>Which Raspberry Pi GPIO pin is your button attached to? (-1 disables the plugin)</b>
+            <b>Which GPIO pin is your button attached to? (-1 disables the plugin)</b>
         </div>
-        <label class="control-label">{{ _('BCM pin:') }}</label>
+        <label class="control-label">{{ _('Button BCM pin:') }}</label>
         <div class="controls" data-toggle="tooltip">
             <input type="number" step="any" min="0" class="input-mini text-right"
                    data-bind="value: settings.plugins.emergencystop.button_pin">
@@ -14,9 +14,9 @@
 
     <div class="control-group">
         <div class="marginBot">
-            <b>Which Raspberry Pi GPIO pin is your LED attached to?</b>
+            <b>Which GPIO pin is your LED attached to?</b>
         </div>
-        <label class="control-label">{{ _('BCM pin:') }}</label>
+        <label class="control-label">{{ _('LED BCM pin:') }}</label>
         <div class="controls" data-toggle="tooltip">
             <input type="number" step="any" min="0" class="input-mini text-right"
                    data-bind="value: settings.plugins.emergencystop.led_pin">
