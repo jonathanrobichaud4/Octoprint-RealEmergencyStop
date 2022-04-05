@@ -11,7 +11,8 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
                                        octoprint.plugin.EventHandlerPlugin,
                                        octoprint.plugin.TemplatePlugin,
                                        octoprint.plugin.SettingsPlugin,
-                                       octoprint.plugin.AssetPlugin):
+                                       octoprint.plugin.AssetPlugin,
+                                       octoprint.plugin.SimpleApiPlugin):
 
     #Init global variables
     def initialize(self):
@@ -189,7 +190,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.16"
+__plugin_version__ = "0.1.17"
 
 def __plugin_check__():
     try:
