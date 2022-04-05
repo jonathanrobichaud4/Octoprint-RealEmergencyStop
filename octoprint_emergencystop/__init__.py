@@ -20,7 +20,6 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         self.led_pin_initialized = False
         self.button = None
         self.led = None
-        self.emergencyGCODE = None
 
     #Gets pin settings from UI config file
     @property
