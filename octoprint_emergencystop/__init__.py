@@ -20,7 +20,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         self.led_pin_initialized = False
         self.button = None
         self.led = None
-        self.emergencyGCODE = ""
+        self.emergencyGCODE = None
 
     #Gets pin settings from UI config file
     @property
@@ -190,7 +190,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.14"
+__plugin_version__ = "0.1.15"
 
 def __plugin_check__():
     try:
