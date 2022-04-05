@@ -34,7 +34,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         return int(self._settings.get(["switch"]))
     @property
     def emergencyGCODE(self):
-        return int(self._settings.get(["emergencyGCODE"]))
+        return str(self._settings.get(["emergencyGCODE"]))
 
     # AssetPlugin hook
     def get_assets(self):
@@ -190,7 +190,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.17"
+__plugin_version__ = "0.1.18"
 
 def __plugin_check__():
     try:
