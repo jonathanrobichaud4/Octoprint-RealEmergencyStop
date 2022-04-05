@@ -47,6 +47,28 @@
             <span class="octoFontFamily iconIndent">Warning! Never connect the button to 5V! 5V could destroy GPIO of your Raspberry Pi.</span>
         </div>
 
+        <div class="control-group">
+            <label class="control-label">{{ _('Emergency GCODE:') }}</label>
+            <div class="controls">
+                <input type="text" class="input-block-level"
+                        data-bind="value: settings.plugins.emergencystop.emergencyGCODE">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">{{ _('Enable warning dialog') }}</label>
+            <div class="controls">
+                <input type="checkbox" data-bind="checked: settings.plugins.emergencystop.confirmationDialog">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">{{ _('Enable big button') }}</label>
+            <div class="controls">
+                <input type="checkbox" data-bind="checked: settings.plugins.emergencystop.big_button">
+            </div>
+        </div>
+
         <div style="font-size: 11px">
             For more information click <a
                 href="https://github.com/jonathanrobichaud4/Octoprint_Emergency_stop">here</a>

@@ -13,27 +13,32 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
                                        octoprint.plugin.SettingsPlugin,
                                        octoprint.plugin.AssetPlugin):
 
+    #Init global variables
     def initialize(self):
         self.estop_sent = False
         self.button_pin_initialized = False
         self.led_pin_initialized = False
         self.button = None
         self.led = None
+        self.emergencyGCODE = ""
 
+    #Gets pin settings from UI config file
     @property
     def button_pin(self):
         return int(self._settings.get(["button_pin"]))
     @property
     def led_pin(self):
         return int(self._settings.get(["led_pin"]))
-
     @property
     def switch(self):
         return int(self._settings.get(["switch"]))
+    @property
+    def emergencyGCODE(self):
+        return int(self._settings.get(["emergencyGCODE"]))
 
     # AssetPlugin hook
     def get_assets(self):
-        return dict(js=["js/emergencystop.js"], css=["css/emergencystop.css"])
+        return dict(js=["js/emergencystop.js"], css=["css/emergencystop.css", "css/fontawesome.all.min.css"])
 
     # Template hooks
     def get_template_configs(self):
@@ -44,42 +49,70 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         return dict(
             button_pin=-1,  # Default is -1
 			led_pin=-1,
-            switch=0
+            switch=0,
+            emergencyGCODE="M112",
+			confirmationDialog=False,
+			big_button=False
         )
 
+    #Startup Function
     def on_after_startup(self):
         self._logger.info("Emergency Stop started")
         self._setup_button()
         self._setup_led()
 
+    #Settings Saved Function
     def on_settings_save(self, data):
         octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
         self._setup_button()
         self._setup_led()
 
+    def get_api_commands(self):
+        return dict(
+            emergencyStop=[]
+        )
+
+    def on_api_command(self, command, data):
+		# check if there is a : in line
+        find_this = ":"
+        if find_this in str(self.emergencyGCODE):
+
+			# if : found then, split, then for each:
+            gcode_list = str(self.emergencyGCODE).split(':')
+            for gcode in gcode_list:
+                self._printer.commands(gcode)
+        else:
+            self._printer.commands(self.emergencyGCODE)
+
+
+    #Button Setup Function
     def _setup_button(self):
         if self.button_enabled():
             self._logger.info("Setting up button.")
-            self._logger.info("Emergency Stop button active on GPIO Pin [%s]" % self.button_pin)
-
+            self._logger.info(
+                f"Emergency Stop button active on GPIO Pin [{self.button_pin}]"
+            )
             if self.switch is 0:
                 self.button = Button(self.button_pin, pull_up=True)
             else:
                 self.button = Button(self.button_pin, pull_up=False)
-
             self.button.when_pressed = self._estop_activated
             self.button.when_released = self._estop_reset
-
+            #self._printer.on_printer_add_message("M112") =
             self.button_pin_initialized = True
+
         else:
             self._logger.info("Button pin not configured, won't work unless configured!")
 
+    #LED Setup Function
     def _setup_led(self):
         if self.button_enabled():
             self._logger.info("Setting up LED.")
+            self._logger.info(
+                f"Emergency Stop LED active on GPIO Pin [{self.led_pin}]"
+            )
             self.led = LED(self.led_pin)
             self.led_pin_initialized = True
-
         else:
             self._logger.info("LED pin not configured, won't work unless configured!")
 
@@ -118,7 +151,6 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         self._logger.info("Emergency stop button was triggered")
         if self.emergency_stop_triggered():
             self.send_emergency_stop()
-
         else:
             self.estop_sent = False
 

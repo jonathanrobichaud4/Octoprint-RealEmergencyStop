@@ -1,7 +1,7 @@
 $(function() {
     function emergencystopViewModel(parameters) {
         var self = this;
-        self.settingsViewModel = parameters[0];
+        //self.settingsViewModel = parameters[0];
 
         self.onDataUpdaterPluginMessage = function(plugin, data) {
             if (plugin !== "emergencystop") {
@@ -17,6 +17,75 @@ $(function() {
             });
 
         }
+
+        this.settings = undefined;
+        this.allSettings = parameters[0];
+        this.loginState = parameters[1];
+        this.printerState = parameters[2];
+        this.confirmation = undefined;
+
+        this.onAfterBinding = function () {};
+        this.onBeforeBinding = function () {
+            this.confirmation = $("#confirmation");
+            this.settings = this.allSettings.settings.plugins.emergencystop;
+        };
+
+        this.click = function () {
+            if (!this.can_send_command())
+                return;
+            if (this.settings.confirmationDialog())
+                this.confirmation.modal("show");
+            else
+                this.sendCommand();
+
+        };
+
+        this.sendCommand = function () {
+            $.ajax({
+                url: API_BASEURL + "plugin/emergencystop",
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify({
+                    command: "emergencyStop"
+                }),
+                contentType: "application/json; charset=UTF-8",
+                success: function (data, status) {}
+            });
+            this.confirmation.modal("hide");
+
+        };
+
+        this.hasControlPermition = function () {
+            let user = this.loginState.currentUser();
+            if(user.permissions !== undefined){
+                return user.permissions.includes("control") || user.needs.role.includes("control");
+            }
+            else return true;
+
+        }
+
+        this.big_button_visible = function () {
+            return this.loginState.isUser() && this.settings.big_button() && this.hasControlPermition();
+        };
+
+        this.little_button_visible = function () {
+            return this.loginState.isUser() && !this.settings.big_button() && this.hasControlPermition();
+        };
+
+        this.can_send_command = function () {
+            return this.loginState.isUser() && this.hasControlPermition() && this.printerState.isOperational() ;
+        };
+
+        this.little_button_css = function () {
+            return (this.printerState.isOperational() ? "emergencystop_small" : "emergencystop_small_disabled");
+        };
+        this.big_button_css = function () {
+            return (this.printerState.isOperational() ? "emergencystop_big" : "emergencystop_big emergencystop_big_disabled");
+        };
+
+        this.get_title = function () {
+            return (this.printerState.isOperational() ? gettext('!!! Emergency Stop !!! ') : gettext('Printer disconnected'));
+        };
 
     }
 
@@ -37,8 +106,7 @@ $(function() {
 
     OCTOPRINT_VIEWMODELS.push({
         construct: emergencystopViewModel,
-        additionalNames: ["yourCustomViewModel"],
-        dependencies: ["settingsViewModel"],
-        elements: ["#settings_plugin_emergencystop_form"]
+        dependencies: ["settingsViewModel", "loginStateViewModel", "printerStateViewModel"],
+        elements: ["#settings_plugin_emergencystop_form", "#navbar_plugin_emergencystop"]
     });
 });
