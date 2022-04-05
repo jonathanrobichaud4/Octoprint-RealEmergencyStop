@@ -2,8 +2,15 @@
 <form class="form-horizontal marginTop">
 
     <div class="control-group">
+        <label class="control-label">{{ _('Enable Physical Button') }}</label>
+        <div class="controls">
+            <input type="checkbox" data-bind="checked: settings.plugins.emergencystop.physical_button">
+        </div>
+    </div>
+
+    <div class="control-group">
         <div class="marginBot">
-            <b>Which GPIO pin is your button attached to? (-1 disables the plugin)</b>
+            <b>Which GPIO pin is your button attached to? </b>
         </div>
         <label class="control-label">{{ _('Button BCM pin:') }}</label>
         <div class="controls" data-toggle="tooltip">
@@ -42,7 +49,7 @@
             <span class="octoFontFamily iconIndent">Button is triggered when closed.</span>
         </div>
 
-        <div class="alert-danger">
+        <div class="alert-danger marginBot">
             <span class="icon-warning-sign"/>
             <span class="octoFontFamily iconIndent">Warning! Never connect the button to 5V! 5V could destroy GPIO of your Raspberry Pi.</span>
         </div>

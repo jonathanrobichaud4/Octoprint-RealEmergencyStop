@@ -1,5 +1,6 @@
 # coding=utf-8
 from __future__ import absolute_import
+from xmlrpc.client import boolean
 
 import octoprint.plugin
 import re
@@ -35,6 +36,9 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
     @property
     def emergencyGCODE(self):
         return str(self._settings.get(["emergencyGCODE"]))
+    @property
+    def physical_switch(self):
+        return bool(self._settings.get(["physical_button"]))
 
     # AssetPlugin hook
     def get_assets(self):
@@ -121,7 +125,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
             self.send_emergency_stop()
 
     def button_enabled(self):
-        return self.button_pin != -1
+        return self.physical_switch != False
 
     def emergency_stop_triggered(self):
         return self.button_pin_initialized and self.button_enabled() and self.button.is_pressed != self.switch
@@ -190,7 +194,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.18"
+__plugin_version__ = "0.1.19"
 
 def __plugin_check__():
     try:
