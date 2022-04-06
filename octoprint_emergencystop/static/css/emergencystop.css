@@ -133,3 +133,11 @@
 .reset_disabled {
     cursor: default;
 }
+
+.reset_button {
+    display:inline-block;
+}
+
+.big_button {
+    display:inline-block;
+}
