@@ -84,10 +84,10 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
     def on_api_command(self, command, data):
         self._logger.info("endpoint fired")
         if command == "emergencyStop":
-            self.send_emergency_stop
+            self.send_emergency_stop()
             self._logger.info("webui estop")
         elif command == "emergencyStopReset":
-            self._estop_reset
+            self._estop_reset()
             self._logger.info("webui reset")
 
 
@@ -172,8 +172,8 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
             self.estop_sent = False
 
     def send_emergency_stop(self):
-        if self.estop_sent:
-            return
+        #if self.estop_sent:
+        #    return
         self._logger.info("Sending emergency stop GCODE")
         self._printer.commands(self.emergencyGCODE)
         self.estop_sent = True
@@ -207,7 +207,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.33"
+__plugin_version__ = "0.1.34"
 
 def __plugin_check__():
     try:
