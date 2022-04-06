@@ -81,14 +81,11 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         )
 
     def on_api_command(self, command, data):
-
         if command == "emergencyStopReset":
-            self._estop_reset()
-
+            self._estop_reset
 		# check if there is a : in line
         find_this = ":"
         if find_this in str(self.emergencyGCODE):
-
 			# if : found then, split, then for each:
             gcode_list = str(self.emergencyGCODE).split(':')
             for gcode in gcode_list:
@@ -201,7 +198,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.30"
+__plugin_version__ = "0.1.31"
 
 def __plugin_check__():
     try:
