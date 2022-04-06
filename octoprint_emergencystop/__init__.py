@@ -98,7 +98,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
                 self.button = Button(self.button_pin, pull_up=True)
             else:
                 self.button = Button(self.button_pin, pull_up=False)
-            self.button.when_pressed = self._estop_activated
+            self.button.when_pressed = self.send_emergency_stop
             self.button.when_released = self.estop_reset
             self.button_pin_initialized = True
 
@@ -117,23 +117,23 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         else:
             self._logger.info("LED pin not configured, won't work unless configured!")
 
-    def sending_gcode(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
-        if self.emergency_stop_triggered():
-            self.send_emergency_stop()
+    #def sending_gcode(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
+     #   if self.emergency_stop_triggered():
+     #       self.send_emergency_stop()
 
     def button_enabled(self):
         return self.physical_switch != False
 
 	#E-Stop activated
-    def emergency_stop_triggered(self):
-        return self.button_pin_initialized and self.button_enabled() and self.button.is_pressed != self.switch
+    #def emergency_stop_triggered(self):
+    #    return self.button_pin_initialized and self.button_enabled() and self.button.is_pressed != self.switch
 
-    def _estop_activated(self, _):
-        self._logger.info("Emergency stop button was triggered")
-        if self.emergency_stop_triggered():
-            self.send_emergency_stop()
-        else:
-            self.estop_sent = False
+    #def _estop_activated(self, _):
+    #    self._logger.info("Emergency stop button was triggered")
+    #    if self.emergency_stop_triggered():
+    #        self.send_emergency_stop()
+    #    else:
+    #        self.estop_sent = False
 
     def send_emergency_stop(self):
         if self.estop_sent:
@@ -197,7 +197,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.43"
+__plugin_version__ = "0.1.44"
 
 def __plugin_check__():
     try:
