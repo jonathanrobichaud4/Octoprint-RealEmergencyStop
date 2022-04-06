@@ -23,7 +23,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         self.button = None
         self.led = None
 
-    #Gets pin settings from UI config file
+    #Gets settings from UI config file
     @property
     def button_pin(self):
         return int(self._settings.get(["button_pin"]))
@@ -36,6 +36,9 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
     @property
     def emergencyGCODE(self):
         return str(self._settings.get(["emergencyGCODE"]))
+    @property
+    def resetGCODE(self):
+        return str(self._settings.get(["resetGCODE"]))
     @property
     def physical_switch(self):
         return bool(self._settings.get(["physical_button"]))
@@ -194,7 +197,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.21"
+__plugin_version__ = "0.1.22"
 
 def __plugin_check__():
     try:

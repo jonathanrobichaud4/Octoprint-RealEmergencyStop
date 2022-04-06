@@ -90,6 +90,10 @@ $(function() {
             return this.loginState.isUser() && this.settings.big_button() && this.hasControlPermition();
         };
 
+        this.reset_button_visible = function () {
+            return this.loginState.isUser() && this.hasControlPermition();
+        };
+
         this.little_button_visible = function () {
             return this.loginState.isUser() && !this.settings.big_button() && this.hasControlPermition();
         };
@@ -110,6 +114,10 @@ $(function() {
 
         this.get_title = function () {
             return (this.printerState.isOperational() ? gettext('!!! Emergency Stop !!! ') : gettext('Printer disconnected'));
+        };
+
+        this.get_reset_title = function () {
+            return (this.printerState.isOperational() ? gettext('Reset Printer ') : gettext('Printer disconnected'));
         };
 
     }
