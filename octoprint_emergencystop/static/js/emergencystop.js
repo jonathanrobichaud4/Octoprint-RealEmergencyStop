@@ -23,6 +23,7 @@ $(function() {
         this.loginState = parameters[1];
         this.printerState = parameters[2];
         this.confirmation = undefined;
+        this.reset_state = True;
 
         this.onAfterBinding = function () {};
         this.onBeforeBinding = function () {
@@ -106,7 +107,7 @@ $(function() {
             return (this.printerState.isOperational() ? "emergencystop_small" : "emergencystop_small_disabled");
         };
         this.reset_button_css = function () {
-            return (this.printerState.isOperational() ? "reset" : "reset_disabled");
+            return (this.reset_state() ? "reset" : "reset_disabled");
         };
         this.big_button_css = function () {
             return (this.printerState.isOperational() ? "emergencystop_big" : "emergencystop_big emergencystop_big_disabled");
