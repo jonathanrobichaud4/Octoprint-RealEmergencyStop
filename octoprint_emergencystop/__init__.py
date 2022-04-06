@@ -58,6 +58,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 			led_pin=-1,
             switch=0,
             emergencyGCODE="M112",
+            resetGCODE="FIRMWARE_RESTART",
 			confirmationDialog=False,
 			big_button=False
         )
@@ -81,17 +82,22 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         )
 
     def on_api_command(self, command, data):
-        if command == "emergencyStopReset":
+        if command == "emergencyStop":
+            self.send_emergency_stop
+        elif command == "emergencyStopReset":
             self._estop_reset
+
+
+
 		# check if there is a : in line
-        find_this = ":"
-        if find_this in str(self.emergencyGCODE):
+       # find_this = ":"
+       # if find_this in str(self.emergencyGCODE):
 			# if : found then, split, then for each:
-            gcode_list = str(self.emergencyGCODE).split(':')
-            for gcode in gcode_list:
-                self._printer.commands(gcode)
-        else:
-            self._printer.commands(self.emergencyGCODE)
+        #    gcode_list = str(self.emergencyGCODE).split(':')
+        #    for gcode in gcode_list:
+        #        self._printer.commands(gcode)
+        #else:
+        #    self._printer.commands(self.emergencyGCODE)
 
 
     #Button Setup Function
@@ -139,7 +145,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         self.led.blink(on_time=0.2, off_time=0.2, n=None, background=True)
         self._printer.connect()
         sleep(3)
-        self._printer.commands("FIRMWARE_RESTART")
+        self._printer.commands(self.resetGCODE)
         self.led.off()
         self.estop_sent = False
 
@@ -166,7 +172,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         if self.estop_sent:
             return
         self._logger.info("Sending emergency stop GCODE")
-        self._printer.commands("M112")
+        self._printer.commands(self.emergencyGCODE)
         self.estop_sent = True
         self.led.blink(on_time=1, off_time=1, n=None, background=True)
 
@@ -198,7 +204,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.31"
+__plugin_version__ = "0.1.32"
 
 def __plugin_check__():
     try:
