@@ -44,7 +44,7 @@ $(function() {
             if (!this.can_send_command())
                 return;
             else
-                this.sendCommand();
+                this.sendResetCommand();
 
         };
 
