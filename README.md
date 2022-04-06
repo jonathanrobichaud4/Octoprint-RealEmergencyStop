@@ -1,5 +1,9 @@
 # Emergency stop
 
+Takes **heavy** inspiration from [Emergency stop simplified](https://github.com/Mechazawa/Emergency_stop_simplified) which covers the physical button and [Simple Emergency Stop](https://github.com/Sebclem/OctoPrint-SimpleEmergencyStop) which covers the UI buttons
+
+**DISREGARD THIS README. THIS PLUGIN IS STILL IN DEVELOPMENT AND I HAVEN'T MADE THE README YET!**
+
 This plugin reacts to a switch or button, if triggered (switch open) it issues **M112** command to printer.
 
 Let's check some features:
