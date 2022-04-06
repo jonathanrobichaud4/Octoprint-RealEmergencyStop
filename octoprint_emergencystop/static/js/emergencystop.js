@@ -107,7 +107,7 @@ $(function() {
             return (this.printerState.isOperational() ? "emergencystop_small" : "emergencystop_small_disabled");
         };
         this.reset_button_css = function () {
-            return (this.reset_state() ? "reset" : "reset_disabled");
+            return ("reset");
         };
         this.big_button_css = function () {
             return (this.printerState.isOperational() ? "emergencystop_big" : "emergencystop_big emergencystop_big_disabled");
