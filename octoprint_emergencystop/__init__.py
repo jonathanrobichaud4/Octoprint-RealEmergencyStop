@@ -77,6 +77,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         )
 
     def on_api_command(self, command, data):
+
 		# check if there is a : in line
         find_this = ":"
         if find_this in str(self.emergencyGCODE):
@@ -102,7 +103,6 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
                 self.button = Button(self.button_pin, pull_up=False)
             self.button.when_pressed = self._estop_activated
             self.button.when_released = self._estop_reset
-            #self._printer.on_printer_add_message("M112") =
             self.button_pin_initialized = True
 
         else:
@@ -194,7 +194,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.19"
+__plugin_version__ = "0.1.20"
 
 def __plugin_check__():
     try:

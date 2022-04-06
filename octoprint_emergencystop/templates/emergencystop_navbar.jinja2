@@ -9,6 +9,16 @@
 </div>
 
 <div>
+    <a data-bind="click: reset, css: reset_button_css(), attr: { title: "Reset" }"
+        href="#">
+        <span class="fa-stack">
+            <i class="far fa-circle fa-stack-2x"></i>
+            <i class="fas fa-arrow-rotate-right fa-stack-1x fa-inverse"></i>
+        </span>
+    </a>
+</div>
+
+<div>
     <a data-bind="click: click, css: big_button_css(), attr: { title: get_title() }, visible: big_button_visible()"
         href="#">
         <div class="emergencystop_big_middle">

@@ -104,3 +104,29 @@
 .emergencystop_big:hover h5{
     text-shadow: grey 1px 0px 8px ;
 }
+
+.reset, .reset_disabled{
+    padding: 12px 0px 12px;
+}
+
+.reset:hover .fa-circle{
+    text-shadow: white 1px 0px 3px ;
+}
+
+.reset i {
+    color: grey;
+}
+
+.reset span, .reset_disabled span {
+    padding: 5px 10px 5px;
+    font-size: 15px
+}
+
+.reset_disabled i {
+    color: grey;
+    cursor: default;
+}
+
+.reset_disabled {
+    cursor: default;
+}

@@ -40,6 +40,14 @@ $(function() {
 
         };
 
+        this.reset = function () {
+            if (!this.can_send_command())
+                return;
+            else
+                this.sendCommand();
+
+        };
+
         this.sendCommand = function () {
             $.ajax({
                 url: API_BASEURL + "plugin/emergencystop",
@@ -52,6 +60,20 @@ $(function() {
                 success: function (data, status) {}
             });
             this.confirmation.modal("hide");
+
+        };
+
+        this.sendResetCommand = function () {
+            $.ajax({
+                url: API_BASEURL + "plugin/emergencystop",
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify({
+                    command: "emergencyStopReset"
+                }),
+                contentType: "application/json; charset=UTF-8",
+                success: function (data, status) {}
+            });
 
         };
 
@@ -78,6 +100,9 @@ $(function() {
 
         this.little_button_css = function () {
             return (this.printerState.isOperational() ? "emergencystop_small" : "emergencystop_small_disabled");
+        };
+        this.reset_button_css = function () {
+            return (this.printerState.isOperational() ? "reset_small" : "reset_disabled");
         };
         this.big_button_css = function () {
             return (this.printerState.isOperational() ? "emergencystop_big" : "emergencystop_big emergencystop_big_disabled");
