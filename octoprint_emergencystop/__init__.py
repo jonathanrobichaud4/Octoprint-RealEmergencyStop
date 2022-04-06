@@ -84,8 +84,10 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
     def on_api_command(self, command, data):
         if command == "emergencyStop":
             self.send_emergency_stop()
+            self._logger.info("web estop")
         elif command == "emergencyStopReset":
             self.estop_reset()
+            self._logger.info("web reset")
 
     #Button Setup Function
     def _setup_button(self):
@@ -191,7 +193,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.41"
+__plugin_version__ = "0.1.42"
 
 def __plugin_check__():
     try:
