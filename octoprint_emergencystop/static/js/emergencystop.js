@@ -106,12 +106,12 @@ $(function() {
         this.little_button_css = function () {
             return (this.printerState.isOperational() ? "emergencystop_small" : "emergencystop_small_disabled");
         };
-       // this.reset_button_css = function () {
-        //    return (this.printerState.isOperational() ? "reset" : "reset_disabled");
-       // };
-       this.reset_button_css = function () {
-            return (this.resetState ? "reset" : "reset_disabled");
+        this.reset_button_css = function () {
+            return (this.printerState.isOperational() ? "reset" : "reset_disabled");
         };
+       //this.reset_button_css = function () {
+       //     return (this.resetState ? "reset" : "reset_disabled");
+       // };
         this.big_button_css = function () {
             return (this.printerState.isOperational() ? "emergencystop_big" : "emergencystop_big emergencystop_big_disabled");
         };
