@@ -23,7 +23,6 @@ $(function() {
         this.loginState = parameters[1];
         this.printerState = parameters[2];
         this.confirmation = undefined;
-        this.resetState = True;
 
         this.onAfterBinding = function () {};
         this.onBeforeBinding = function () {
