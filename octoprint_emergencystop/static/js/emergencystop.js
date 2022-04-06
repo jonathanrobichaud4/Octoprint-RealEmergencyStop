@@ -41,7 +41,7 @@ $(function() {
         };
 
         this.reset = function () {
-            if (!this.can_send_command())
+            if (!this.reset_can_send_command())
                 return;
             else
                 this.sendResetCommand();
@@ -100,6 +100,10 @@ $(function() {
 
         this.can_send_command = function () {
             return this.loginState.isUser() && this.hasControlPermition() && this.printerState.isOperational() ;
+        };
+
+        this.reset_can_send_command = function () {
+            return this.loginState.isUser() && this.hasControlPermition();
         };
 
         this.little_button_css = function () {
