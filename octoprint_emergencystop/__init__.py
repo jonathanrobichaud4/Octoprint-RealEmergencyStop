@@ -76,10 +76,14 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 
     def get_api_commands(self):
         return dict(
-            emergencyStop=[]
+            emergencyStop=[],
+            emergencyStopReset=[]
         )
 
     def on_api_command(self, command, data):
+
+        if command == "emergencyStopReset":
+            self._estop_reset()
 
 		# check if there is a : in line
         find_this = ":"
@@ -197,7 +201,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.28"
+__plugin_version__ = "0.1.29"
 
 def __plugin_check__():
     try:

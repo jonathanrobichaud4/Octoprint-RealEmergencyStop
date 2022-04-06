@@ -117,7 +117,7 @@
 }
 
 .reset i {
-    color: grey;
+    color: white;
 }
 
 .reset span, .reset_disabled span {
@@ -126,7 +126,7 @@
 }
 
 .reset_disabled i {
-    color: lightgrey;
+    color: grey;
     cursor: default;
 }
 
