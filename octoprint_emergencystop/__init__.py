@@ -84,10 +84,8 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
     def on_api_command(self, command, data):
         if command == "emergencyStop":
             self.send_emergency_stop()
-            self._logger.info("web estop")
         elif command == "emergencyStopReset":
             self.estop_reset()
-            self._logger.info("web reset")
 
     #Button Setup Function
     def _setup_button(self):
@@ -96,7 +94,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
             self._logger.info(
                 f"Emergency Stop button active on GPIO Pin [{self.button_pin}]"
             )
-            if self.switch is 0:
+            if self.switch == 0:
                 self.button = Button(self.button_pin, pull_up=True)
             else:
                 self.button = Button(self.button_pin, pull_up=False)
@@ -126,9 +124,27 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
     def button_enabled(self):
         return self.physical_switch != False
 
+	#E-Stop activated
     def emergency_stop_triggered(self):
         return self.button_pin_initialized and self.button_enabled() and self.button.is_pressed != self.switch
 
+    def _estop_activated(self, _):
+        self._logger.info("Emergency stop button was triggered")
+        if self.emergency_stop_triggered():
+            self.send_emergency_stop()
+        else:
+            self.estop_sent = False
+
+    def send_emergency_stop(self):
+        if self.estop_sent:
+            return
+        self._logger.info("Sending emergency stop GCODE")
+        self._printer.commands(self.emergencyGCODE)
+        self.estop_sent = True
+        self.led.blink(on_time=1, off_time=1, n=None, background=True)
+
+
+	#E-Stop Reset
     def estop_reset(self):
         self._logger.info("Emergency stop button was reset")
         self.led.blink(on_time=0.2, off_time=0.2, n=None, background=True)
@@ -138,6 +154,8 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         self.led.off()
         self.estop_sent = False
 
+
+	#extra UI Shit idk what this really does lmao
     def on_event(self, event, payload):
         if event is Events.CONNECTED:
             self.estop_sent = False
@@ -150,20 +168,6 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
             elif event is Events.PRINT_STARTED:
                 self._plugin_manager.send_plugin_message(self._identifier, dict(type="info", autoClose=True, msg="You may have forgotten to configure this plugin."))
 
-    def _estop_activated(self, _):
-        self._logger.info("Emergency stop button was triggered")
-        if self.emergency_stop_triggered():
-            self.send_emergency_stop()
-        else:
-            self.estop_sent = False
-
-    def send_emergency_stop(self):
-        #if self.estop_sent:
-        #    return
-        self._logger.info("Sending emergency stop GCODE")
-        self._printer.commands(self.emergencyGCODE)
-        self.estop_sent = True
-        self.led.blink(on_time=1, off_time=1, n=None, background=True)
 
     def get_update_information(self):
         # Define the configuration for your plugin to use with the Software Update
