@@ -45,7 +45,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 
     # AssetPlugin hook
     def get_assets(self):
-        return dict(js=["js/emergencystop.js"], css=["css/emergencystop.css", "css/fontawesome.all.min.css"])
+        return dict(js=["js/emergencystop.js"], css=["css/emergencystop.css", "css/fontawesome.min.css"])
 
     # Template hooks
     def get_template_configs(self):
@@ -197,7 +197,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.25"
+__plugin_version__ = "0.1.26"
 
 def __plugin_check__():
     try:
