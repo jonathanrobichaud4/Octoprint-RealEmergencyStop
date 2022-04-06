@@ -82,12 +82,12 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         )
 
     def on_api_command(self, command, data):
-        self._logger.info("endpoint fired")
+
         if command == "emergencyStop":
             self.send_emergency_stop()
             self._logger.info("webui estop")
         elif command == "emergencyStopReset":
-            self._estop_reset()
+            self.estop_reset()
             self._logger.info("webui reset")
 
 
@@ -115,7 +115,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
             else:
                 self.button = Button(self.button_pin, pull_up=False)
             self.button.when_pressed = self._estop_activated
-            self.button.when_released = self._estop_reset
+            self.button.when_released = self.estop_reset
             self.button_pin_initialized = True
 
         else:
@@ -143,7 +143,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
     def emergency_stop_triggered(self):
         return self.button_pin_initialized and self.button_enabled() and self.button.is_pressed != self.switch
 
-    def _estop_reset(self, _):
+    def estop_reset(self):
         self._logger.info("Emergency stop button was reset")
         self.led.blink(on_time=0.2, off_time=0.2, n=None, background=True)
         self._printer.connect()
@@ -207,7 +207,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.34"
+__plugin_version__ = "0.1.35"
 
 def __plugin_check__():
     try:
