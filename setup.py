@@ -11,14 +11,14 @@ plugin_package = "octoprint_emergencystop"
 
 # The plugin's human readable name. Can be overwritten within OctoPrint's internal data via __plugin_name__ in the
 # plugin module
-plugin_name = "Emergency stop"
+plugin_name = "Real Emergency stop"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
 plugin_version = "0.1.47"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
-plugin_description = """Simple plugin reacting to an emergency stop button, issuing M112 (emergency stop) command to printer"""
+plugin_description = """A plugin that uses a real emergency stop button that can be found on industrial equipment. Also has a E-Stop button in the top bar"""
 
 # The plugin's author. Can be overwritten within OctoPrint's internal data via __plugin_author__ in the plugin module
 plugin_author = "Jonathan Robichaud"
