@@ -18,7 +18,7 @@ plugin_version = "0.1.47"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
-plugin_description = """A plugin that uses a real emergency stop button that can be found on industrial equipment. Also has a E-Stop button in the top bar"""
+plugin_description = """An OctoPrint plugin that uses a real emergency stop button that can be found on industrial equipment. Also has a E-Stop button in the top bar"""
 
 # The plugin's author. Can be overwritten within OctoPrint's internal data via __plugin_author__ in the plugin module
 plugin_author = "Jonathan Robichaud"
