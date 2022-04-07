@@ -54,8 +54,8 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
     # Settings hook
     def get_settings_defaults(self):
         return dict(
-            button_pin=-1,  # Default is -1
-			led_pin=-1,
+            button_pin=0,
+			led_pin=0,
             switch=0,
             emergencyGCODE="M112",
             resetGCODE="FIRMWARE_RESTART",
@@ -85,6 +85,12 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         if command == "emergencyStop":
             self.send_emergency_stop()
         elif command == "emergencyStopReset":
+            self.estop_reset()
+
+    def custom_stop_command(self, comm, phase, command, parameters, tags=None, *args, **kwargs):
+        if command == "estop":
+            self.send_emergency_stop()
+        elif command == "estopreset":
             self.estop_reset()
 
     #Button Setup Function
@@ -117,23 +123,8 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         else:
             self._logger.info("LED pin not configured, won't work unless configured!")
 
-    #def sending_gcode(self, comm_instance, phase, cmd, cmd_type, gcode, subcode=None, tags=None, *args, **kwargs):
-     #   if self.emergency_stop_triggered():
-     #       self.send_emergency_stop()
-
     def button_enabled(self):
         return self.physical_switch != False
-
-	#E-Stop activated
-    #def emergency_stop_triggered(self):
-    #    return self.button_pin_initialized and self.button_enabled() and self.button.is_pressed != self.switch
-
-    #def _estop_activated(self, _):
-    #    self._logger.info("Emergency stop button was triggered")
-    #    if self.emergency_stop_triggered():
-    #        self.send_emergency_stop()
-    #    else:
-    #        self.estop_sent = False
 
     def send_emergency_stop(self):
         if self.estop_sent:
@@ -197,7 +188,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.46"
+__plugin_version__ = "0.1.47"
 
 def __plugin_check__():
     try:
@@ -213,5 +204,5 @@ def __plugin_load__():
     global __plugin_hooks__
     __plugin_hooks__ = {
         "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
-     #   "octoprint.comm.protocol.gcode.sending": __plugin_implementation__.sending_gcode,
+		"octoprint.comm.protocol.atcommand.sending": __plugin_implementation__.custom_stop_command,
     }
