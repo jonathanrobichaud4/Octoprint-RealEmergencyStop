@@ -16,7 +16,7 @@
 
 .emergencystop_small, .emergencystop_small_disabled{
     display:inline-block;
-    padding: 12px 0px 12px;
+    padding: 2px 0px 2px;
 }
 
 .emergencystop_small:hover .fa-circle{
@@ -108,7 +108,7 @@
 }
 
 .reset, .reset_disabled{
-    padding: 12px 0px 12px;
+    padding: 2px 0px 2px;
     display:inline-block;
 }
 
