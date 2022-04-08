@@ -8,7 +8,7 @@ from octoprint.events import Events
 from time import sleep
 from gpiozero import LED, Button
 
-class RealEmergencyStopPlugin(octoprint.plugin.StartupPlugin,
+class realemergencystopPlugin(octoprint.plugin.StartupPlugin,
                                        octoprint.plugin.EventHandlerPlugin,
                                        octoprint.plugin.TemplatePlugin,
                                        octoprint.plugin.SettingsPlugin,
@@ -199,7 +199,7 @@ def __plugin_check__():
 
 def __plugin_load__():
     global __plugin_implementation__
-    __plugin_implementation__ = RealEmergencyStopPlugin()
+    __plugin_implementation__ = realemergencystopPlugin()
 
     global __plugin_hooks__
     __plugin_hooks__ = {

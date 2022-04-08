@@ -1,10 +1,10 @@
 $(function() {
-    function RealEmergencyStopViewModel(parameters) {
+    function realemergencystopViewModel(parameters) {
         var self = this;
         //self.settingsViewModel = parameters[0];
 
         self.onDataUpdaterPluginMessage = function(plugin, data) {
-            if (plugin !== "RealEmergencyStop") {
+            if (plugin !== "realemergencystop") {
                 console.log('Ignoring '+plugin);
                 return;
             }
@@ -27,7 +27,7 @@ $(function() {
         this.onAfterBinding = function () {};
         this.onBeforeBinding = function () {
             this.confirmation = $("#confirmation");
-            this.settings = this.allSettings.settings.plugins.RealEmergencyStop;
+            this.settings = this.allSettings.settings.plugins.realemergencystop;
         };
 
         this.click = function () {
@@ -50,7 +50,7 @@ $(function() {
 
         this.sendCommand = function () {
             $.ajax({
-                url: API_BASEURL + "plugin/RealEmergencyStop",
+                url: API_BASEURL + "plugin/realemergencystop",
                 type: "POST",
                 dataType: "json",
                 data: JSON.stringify({
@@ -65,7 +65,7 @@ $(function() {
 
         this.sendResetCommand = function () {
             $.ajax({
-                url: API_BASEURL + "plugin/RealEmergencyStop",
+                url: API_BASEURL + "plugin/realemergencystop",
                 type: "POST",
                 dataType: "json",
                 data: JSON.stringify({
@@ -140,7 +140,7 @@ $(function() {
     //]);
 
     OCTOPRINT_VIEWMODELS.push({
-        construct: RealEmergencyStopViewModel,
+        construct: realemergencystopViewModel,
         dependencies: ["settingsViewModel", "loginStateViewModel", "printerStateViewModel"],
         elements: ["#settings_plugin_realemergencystop_form", "#navbar_plugin_realemergencystop"]
     });
