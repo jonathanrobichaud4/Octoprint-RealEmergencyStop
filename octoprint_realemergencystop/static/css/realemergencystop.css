@@ -14,54 +14,54 @@
     margin-left: 10px;
 }
 
-.emergencystop_small, .emergencystop_small_disabled{
+.realemergencystop_small, .realemergencystop_small_disabled{
     display:inline-block;
     padding: 2px 0px 2px;
 }
 
-.emergencystop_small:hover .fa-circle{
+.realemergencystop_small:hover .fa-circle{
     text-shadow: grey 1px 0px 3px ;
 }
 
-.emergencystop_small i {
+.realemergencystop_small i {
     color: red;
 }
 
-.emergencystop_small span, .emergencystop_small_disabled span {
+.realemergencystop_small span, .realemergencystop_small_disabled span {
     padding: 5px 10px 5px;
     font-size: 15px
 }
 
-.emergencystop_small_disabled i {
+.realemergencystop_small_disabled i {
     color: grey;
     cursor: default;
 }
 
-.emergencystop_small_disabled {
+.realemergencystop_small_disabled {
     cursor: default;
 }
 
-.emergencystop_big, .emergencystop_big_disabled{
+.realemergencystop_big, .realemergencystop_big_disabled{
     display:inline-block;
     padding: 0px 5px 0px 5px
 }
 
-.emergencystop_big_disabled {
+.realemergencystop_big_disabled {
     cursor: default;
 }
 
-.emergencystop_big_disabled .emergencystop_big_middle{
+.realemergencystop_big_disabled .realreemergencystop_big_middle{
     background-color: grey;
 }
-.emergencystop_big_disabled .emergencystop_big_middle h5 {
+.realemergencystop_big_disabled .realemergencystop_big_middle h5 {
     color: lightgray;
 }
 
-.emergencystop_big_disabled .emergencystop_big_middle i {
+.realemergencystop_big_disabled .realemergencystop_big_middle i {
     color: lightgray;
 }
 
-.emergencystop_big_middle {
+.realemergencystop_big_middle {
     display: inline-block;
     height: calc(100% - 10px);
     margin: 4px 0 5px 0;
@@ -72,7 +72,7 @@
     border-radius: 5px;
 }
 
-.emergencystop_big_middle h5 {
+.realemergencystop_big_middle h5 {
     font-size: 15px;
     text-shadow: none;
     font-weight: bold;
@@ -86,11 +86,11 @@
     display: inline;
 }
 
-.emergencystop_big_middle span{
+.realemergencystop_big_middle span{
     font-size: 11px;
 }
 
-.emergencystop_big i {
+.realemergencystop_big i {
     /*font-size: 20px;*/
     /*font-weight: bold;*/
     /*display: inline;*/
@@ -99,11 +99,11 @@
     vertical-align: middle;
 }
 
-.emergencystop_big:hover .fa-circle{
+.realemergencystop_big:hover .fa-circle{
     text-shadow: grey 1px 0px 8px ;
 }
 
-.emergencystop_big:hover h5{
+.realemergencystop_big:hover h5{
     text-shadow: grey 1px 0px 8px ;
 }
 

@@ -1,4 +1,4 @@
-# Emergency stop
+# Real Emergency Stop
 
 Takes **heavy** inspiration from [Emergency stop simplified](https://github.com/Mechazawa/Emergency_stop_simplified) which covers the physical button and [Simple Emergency Stop](https://github.com/Sebclem/OctoPrint-SimpleEmergencyStop) which covers the UI buttons
 

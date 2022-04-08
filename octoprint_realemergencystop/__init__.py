@@ -8,7 +8,7 @@ from octoprint.events import Events
 from time import sleep
 from gpiozero import LED, Button
 
-class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
+class RealEmergencyStopPlugin(octoprint.plugin.StartupPlugin,
                                        octoprint.plugin.EventHandlerPlugin,
                                        octoprint.plugin.TemplatePlugin,
                                        octoprint.plugin.SettingsPlugin,
@@ -45,7 +45,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 
     # AssetPlugin hook
     def get_assets(self):
-        return dict(js=["js/emergencystop.js"], css=["css/emergencystop.css", "css/fontawesome.min.css"])
+        return dict(js=["js/realemergencystop.js"], css=["css/realemergencystop.css", "css/fontawesome.min.css"])
 
     # Template hooks
     def get_template_configs(self):
@@ -65,7 +65,7 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 
     #Startup Function
     def on_after_startup(self):
-        self._logger.info("Emergency Stop started")
+        self._logger.info("Real Emergency Stop started")
         self._setup_button()
         self._setup_led()
 
@@ -166,17 +166,17 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
         # for details.
         return dict(
             emergencystop=dict(
-                displayName="Emergency stop",
+                displayName="Real Emergency stop",
                 displayVersion=self._plugin_version,
 
                 # version check: github repository
                 type="github_release",
                 user="jonathanrobichaud4",
-                repo="Octoprint_Emergency_stop",
+                repo="Octoprint-RealEmergencyStop",
                 current=self._plugin_version,
 
                 # update method: pip
-                pip="https://github.com/jonathanrobichaud4/Octoprint_Emergency_stop/archive/{target_version}.zip"
+                pip="https://github.com/jonathanrobichaud4/Octoprint-RealEmergencyStop/archive/{target_version}.zip"
             )
         )
 
@@ -187,8 +187,8 @@ class Emergency_stopPlugin(octoprint.plugin.StartupPlugin,
 # __plugin_pythoncompat__ = ">=3,<4" # only python 3
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
-__plugin_name__ = "Emergency Stop"
-__plugin_version__ = "0.1.47"
+__plugin_name__ = "Real Emergency Stop"
+__plugin_version__ = "0.1.50"
 
 def __plugin_check__():
     try:
@@ -199,7 +199,7 @@ def __plugin_check__():
 
 def __plugin_load__():
     global __plugin_implementation__
-    __plugin_implementation__ = Emergency_stopPlugin()
+    __plugin_implementation__ = RealEmergencyStopPlugin()
 
     global __plugin_hooks__
     __plugin_hooks__ = {

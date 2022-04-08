@@ -1,16 +1,16 @@
 $(function() {
-    function emergencystopViewModel(parameters) {
+    function RealEmergencyStopViewModel(parameters) {
         var self = this;
         //self.settingsViewModel = parameters[0];
 
         self.onDataUpdaterPluginMessage = function(plugin, data) {
-            if (plugin !== "emergencystop") {
+            if (plugin !== "RealEmergencyStop") {
                 console.log('Ignoring '+plugin);
                 return;
             }
 
             new PNotify({
-                title: 'Emergency stop',
+                title: 'Real Emergency stop',
                 text: data.msg,
                 type: data.type,
                 hide: data.autoClose
@@ -27,7 +27,7 @@ $(function() {
         this.onAfterBinding = function () {};
         this.onBeforeBinding = function () {
             this.confirmation = $("#confirmation");
-            this.settings = this.allSettings.settings.plugins.emergencystop;
+            this.settings = this.allSettings.settings.plugins.RealEmergencyStop;
         };
 
         this.click = function () {
@@ -50,7 +50,7 @@ $(function() {
 
         this.sendCommand = function () {
             $.ajax({
-                url: API_BASEURL + "plugin/emergencystop",
+                url: API_BASEURL + "plugin/RealEmergencyStop",
                 type: "POST",
                 dataType: "json",
                 data: JSON.stringify({
@@ -65,7 +65,7 @@ $(function() {
 
         this.sendResetCommand = function () {
             $.ajax({
-                url: API_BASEURL + "plugin/emergencystop",
+                url: API_BASEURL + "plugin/RealEmergencyStop",
                 type: "POST",
                 dataType: "json",
                 data: JSON.stringify({
@@ -107,16 +107,11 @@ $(function() {
         };
 
         this.little_button_css = function () {
-            return (this.printerState.isOperational() ? "emergencystop_small" : "emergencystop_small_disabled");
+            return (this.printerState.isOperational() ? "realemergencystop_small" : "realemergencystop_small_disabled");
         };
-        //this.reset_button_css = function () {
-        //    return (this.printerState.isOperational() ? "reset" : "reset_disabled");
-        //};
-       //this.reset_button_css = function () {
-       //     return (this.resetState ? "reset" : "reset_disabled");
-       // };
+
         this.big_button_css = function () {
-            return (this.printerState.isOperational() ? "emergencystop_big" : "emergencystop_big emergencystop_big_disabled");
+            return (this.printerState.isOperational() ? "realemergencystop_big" : "realemergencystop_big realemergencystop_big_disabled");
         };
 
         this.get_title = function () {
@@ -145,8 +140,8 @@ $(function() {
     //]);
 
     OCTOPRINT_VIEWMODELS.push({
-        construct: emergencystopViewModel,
+        construct: RealEmergencyStopViewModel,
         dependencies: ["settingsViewModel", "loginStateViewModel", "printerStateViewModel"],
-        elements: ["#settings_plugin_emergencystop_form", "#navbar_plugin_emergencystop"]
+        elements: ["#settings_plugin_realemergencystop_form", "#navbar_plugin_realemergencystop"]
     });
 });
