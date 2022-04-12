@@ -7,6 +7,7 @@ import re
 from octoprint.events import Events
 from time import sleep
 from gpiozero import LED, Button
+import click
 
 class realemergencystopPlugin(octoprint.plugin.StartupPlugin,
                                        octoprint.plugin.EventHandlerPlugin,
@@ -87,10 +88,12 @@ class realemergencystopPlugin(octoprint.plugin.StartupPlugin,
         elif command == "emergencyStopReset":
             self.estop_reset()
 
-    def custom_stop_command(self, comm, phase, command, parameters, tags=None, *args, **kwargs):
-        if command == "estop":
+    def custom_stop_command(cli_group, self, pass_octoprint_ctx, *args, **kwargs):
+        @click.command("estop")
+        def estop_command():
             self.send_emergency_stop()
-        elif command == "estopreset":
+        @click.command("estopreset")
+        def estopreset_command():
             self.estop_reset()
 
     #Button Setup Function
@@ -188,7 +191,7 @@ class realemergencystopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Real Emergency Stop"
-__plugin_version__ = "0.1.1"
+__plugin_version__ = "0.1.2"
 
 def __plugin_check__():
     try:
@@ -204,5 +207,5 @@ def __plugin_load__():
     global __plugin_hooks__
     __plugin_hooks__ = {
         "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
-		"octoprint.comm.protocol.atcommand.sending": __plugin_implementation__.custom_stop_command,
+        "octoprint.cli.commands": __plugin_implementation__.custom_stop_command
     }
