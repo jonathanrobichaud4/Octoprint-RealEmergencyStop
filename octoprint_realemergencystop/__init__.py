@@ -92,13 +92,13 @@ class realemergencystopPlugin(octoprint.plugin.StartupPlugin,
         @click.command("estop")
         def estop_command(self):
             """Printer E-STOP"""
-            self.send_emergency_stop
+            self.send_emergency_stop()
             click.echo("ESTOP ACTIVATED!")
 
         @click.command("estopreset")
         def estopreset_command(self):
             """Printer E-Stop Reset"""
-            self.estop_reset
+            self.estop_reset()
             click.echo("ESTOP RESET!")
 
         return [estop_command, estopreset_command]
@@ -198,7 +198,7 @@ class realemergencystopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Real Emergency Stop"
-__plugin_version__ = "0.1.5"
+__plugin_version__ = "0.1.6"
 
 def __plugin_check__():
     try:
