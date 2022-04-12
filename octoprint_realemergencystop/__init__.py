@@ -111,19 +111,21 @@ class realemergencystopPlugin(octoprint.plugin.StartupPlugin,
             except requests.exceptions.HTTPError as e:
                 click.echo(f"HTTP Error, got {e}")
                 sys.exit(1)
-
             return r
+
+        @client_options
         @click.command("estop")
         def estop_command(apikey, host, port, httpuser, httppass, https, prefix):
             """Printer E-STOP"""
             r = _api_command('emergencyStop', apikey, host, port, httpuser, httppass, https, prefix)
             if r.status_code in [200, 204]:
                 click.echo('ESTOP ACTIVATED!')
+
+        @client_options
         @click.command("estopreset")
         def estopreset_command(apikey, host, port, httpuser, httppass, https, prefix):
             """Printer E-Stop Reset"""
-            r = _api_command('emergencyStop', apikey, host, port, httpuser, httppass, https, prefix)
-
+            r = _api_command('emergencyStopReset', apikey, host, port, httpuser, httppass, https, prefix)
             if r.status_code in [200, 204]:
                 click.echo("ESTOP RESET!")
 
@@ -224,7 +226,7 @@ class realemergencystopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Real Emergency Stop"
-__plugin_version__ = "0.1.9"
+__plugin_version__ = "0.1.10"
 
 def __plugin_check__():
     try:
