@@ -8,6 +8,10 @@ from octoprint.events import Events
 from time import sleep
 from gpiozero import LED, Button
 import click
+from octoprint.cli.client import create_client, client_options
+import sys
+import json
+import requests.exceptions
 
 class realemergencystopPlugin(octoprint.plugin.StartupPlugin,
                                        octoprint.plugin.EventHandlerPlugin,
@@ -56,12 +60,12 @@ class realemergencystopPlugin(octoprint.plugin.StartupPlugin,
     def get_settings_defaults(self):
         return dict(
             button_pin=0,
-			led_pin=0,
+            led_pin=0,
             switch=0,
             emergencyGCODE="M112",
             resetGCODE="FIRMWARE_RESTART",
-			confirmationDialog=False,
-			big_button=False
+            confirmationDialog=False,
+            big_button=False
         )
 
     #Startup Function
@@ -89,17 +93,39 @@ class realemergencystopPlugin(octoprint.plugin.StartupPlugin,
             self.estop_reset()
 
     def custom_stop_command(self, cli_group, pass_octoprint_ctx, *args, **kwargs):
-        @click.command("estop")
-        def estop_command():
-            """Printer E-STOP"""
-            self.send_emergency_stop()
-            click.echo("ESTOP ACTIVATED!")
+        def _api_command(command, apikey, host, port, httpuser, httppass, https, prefix):
+            if prefix is None:
+                prefix = '/api'
+            client = create_client(settings=cli_group.settings,
+                                apikey=apikey,
+                                host=host,
+                                port=port,
+                                httpuser=httpuser,
+                                httppass=httppass,
+                                https=https,
+                                prefix=prefix)
 
+            r = client.post_command("plugin/realemergencystop", command)
+            try:
+                r.raise_for_status()
+            except requests.exceptions.HTTPError as e:
+                click.echo(f"HTTP Error, got {e}")
+                sys.exit(1)
+
+            return r
+        @click.command("estop")
+        def estop_command(apikey, host, port, httpuser, httppass, https, prefix):
+            """Printer E-STOP"""
+            r = _api_command('emergencyStop', apikey, host, port, httpuser, httppass, https, prefix)
+            if r.status_code in [200, 204]:
+                click.echo('ESTOP ACTIVATED!')
         @click.command("estopreset")
-        def estopreset_command():
+        def estopreset_command(apikey, host, port, httpuser, httppass, https, prefix):
             """Printer E-Stop Reset"""
-            self.estop_reset()
-            click.echo("ESTOP RESET!")
+            r = _api_command('emergencyStop', apikey, host, port, httpuser, httppass, https, prefix)
+
+            if r.status_code in [200, 204]:
+                click.echo("ESTOP RESET!")
 
         return [estop_command, estopreset_command]
 
@@ -145,7 +171,7 @@ class realemergencystopPlugin(octoprint.plugin.StartupPlugin,
         self.led.blink(on_time=1, off_time=1, n=None, background=True)
 
 
-	#E-Stop Reset
+    #E-Stop Reset
     def estop_reset(self):
         self._logger.info("Emergency stop button was reset")
         self.led.blink(on_time=0.2, off_time=0.2, n=None, background=True)
@@ -156,7 +182,7 @@ class realemergencystopPlugin(octoprint.plugin.StartupPlugin,
         self.estop_sent = False
 
 
-	#extra UI Shit idk what this really does lmao
+    #extra UI Shit idk what this really does lmao
     def on_event(self, event, payload):
         if event is Events.CONNECTED:
             self.estop_sent = False
@@ -198,7 +224,7 @@ class realemergencystopPlugin(octoprint.plugin.StartupPlugin,
 __plugin_pythoncompat__ = ">=2.7,<4"  # python 2 and 3
 
 __plugin_name__ = "Real Emergency Stop"
-__plugin_version__ = "0.1.8"
+__plugin_version__ = "0.1.9"
 
 def __plugin_check__():
     try:
